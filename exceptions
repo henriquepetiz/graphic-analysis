@@ -1,0 +1,15 @@
+# excecoes.py
+
+##criação de excecoes para abertura de arquivos
+
+class ErroNoCarregamento(Exception):
+## quando há um erro no arquivo carregado, por exemplo arquivo vazio ou imcompatível
+   def __init__(self, mensagem = "Erro no carregamento do arquivo"):
+     self.mensagem = mensagem
+     super().__init__(self.mensagem)
+
+class DadosNaoCarregados(Exception):
+  ###Quando não há dados para consultar
+  def __init__(self, mensagem="Os dados não foram carregados. Execute 'carregar_dados()' primeiro."):
+      self.mensagem = mensagem
+      super().__init__(self.mensagem)
