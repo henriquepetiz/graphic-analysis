@@ -1,64 +1,52 @@
-import zipfile; z = zipfile.ZipFile('steam_games.zip'); 
+# main.py
 
-print('\n'.join(z.namelist()[:10]))
+from dados_jogos import AnalisadorJogos
+import testes_jogos
+import unittest
+import sys
 
-import zipfile
-import os
+ARQUIVO_FINAL = 'extracted_data/steam_games.csv'
 
-if not os.path.exists('data/'):
-    os.makedirs('data/')
+print("====================================================")
+print("--- 1. EXECUTANDO TESTES DE UNIDADE COM A AMOSTRA ---")
+print("====================================================")
+
+suite = unittest.TestLoader().loadTestsFromModule(testes_jogos)
+runner = unittest.TextTestRunner(verbosity=2)
+resultado_testes = runner.run(suite)
+
+if not resultado_testes.wasSuccessful():
+    print("\n\nERRO FATAL: OS TESTES DE UNIDADE FALHARAM!")
+    sys.exit(1)
+else:
+    print("\nTODOS OS TESTES PASSARAM! O código é confiável.")
+
+print("\n" + "=" * 50)
+print("--- 2. ANÁLISE FINAL COM O ARQUIVO COMPLETO ---")
+print("=" * 50)
 
 try:
-    with zipfile.ZipFile('steam_games.zip', 'r') as zip_ref:
-        zip_ref.extractall('data/')
-except FileNotFoundError:
-    pass
-except Exception:
-    pass
+    analisador = AnalisadorJogos()
+    analisador.carregar_dados(ARQUIVO_FINAL)
 
+    print(f"Dados Carregados do Arquivo Completo: {ARQUIVO_FINAL}\n")
 
+    print("## Pergunta 1: Qual o percentual de jogos gratuitos e pagos na plataforma?")
+    res1 = analisador.consultar_percentual_gratis()
+    print(f"> Resposta: Dos {res1['Total']} jogos analisados, **{res1['Gratuitos']}%** são gratuitos e **{res1['Pagos']}%** são pagos.")
+    print("-" * 20)
 
-#### importa as bibliotecas necessárias
+    print("\n## Pergunta 2: Qual o ano com o maior número de novos jogos? (Com empate)")
+    res2 = analisador.consultar_ano_maior_lancamento()
+    print(f"> Resposta: O(s) ano(s) com o maior número de lançamentos ({res2['Contagem']} jogos) é(são): **{', '.join(res2['Ano(s)'])}**.")
+    print("-" * 20)
 
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn  as sns
+    print("\n## Pergunta 3: Qual é a desenvolvedora com o maior número de jogos com Metacritic >= 90?")
+    res3 = analisador.consultar_dev_metacritic_90()
+    print(f"> Resposta: A desenvolvedora com mais jogos aclamados ({res3['Contagem']} títulos com Metacritic >= 90) é **{res3['Desenvolvedora']}**.")
+    print("-" * 20)
 
-### Printa as colunas para melhor organização do código
+except Exception as e:
+    print(f"\nERRO FATAL NA EXECUÇÃO PRINCIPAL: {e}")
 
-df = pd.read_csv('data/steam_games.csv')
-print(df.columns)
-
-### Converte a coluna de Data de Lançamento para o formato datetime
-df['Release date'] = pd.to_datetime(df['Release date'], errors='coerce')
-
-###melhora comunicação com coluna de Data de Lançamento
-df.rename(columns={'Release date': 'release_date'}, inplace=True)
-
-### Separa os gêneros em uma lista criando uma linha para cada gênero
-df['Genres'] = df['Genres'].str.split(';').str.strip()
-df_exploded_genres = df.explode('Genres')
-
-### Converte a coluna de Pontuação Metacritic para numérico
-df['Metacritic score'] = pd.to_numeric(df['Metacritic score'], errors='coerce')
-
-# Remove linhas duplicadas, mantendo a primeira ocorrência do jogo ('Name')
-df_limpo_p1 = df.drop_duplicates(subset=['Name'], keep='first').copy()
-
-# Removendo linhas onde a pontuação Metacritic é NaN, pois é o foco da P1
-df_metacritic_validos = df.dropna(subset=['Metacritic score']).copy()
-
-###ordenar pontuação  de forma decrescente
-top_10_ordenado = df_metacritic_validos.sort_values(
-    by=['Metacritic score', 'release_date'], 
-    ascending=[False, True]
-).head(10)
-
-### Mostra as colunas desejadas
-colunas_para_mostrar = ['Name', 'Metacritic score', 'release_date', 'Developers']
-
-print("Top 10 Jogos no Steam (P1 - Ordenação de Dois Níveis):")
-
-with pd.option_context('display.max_columns', None, 'display.width', 1000):
-    print(top_10_ordenado[colunas_para_mostrar])
+print("\n[PROGRAMA CONCLUÍDO]")
