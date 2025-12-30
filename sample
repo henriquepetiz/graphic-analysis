@@ -1,0 +1,63 @@
+# create_sample.py
+
+import csv
+import os
+import random
+import sys
+
+# --- Configuração de Caminhos ---
+ARQUIVO_ORIGINAL = 'extracted_data/steam_games.csv'
+ARQUIVO_AMOSTRA = 'extracted_data/amostra_teste.csv'
+TAMANHO_AMOSTRA = 20
+# A seed garante que a amostra de 20 jogos seja a mesma sempre
+random.seed(42) 
+
+def criar_amostra_aleatoria():
+    """Lê o arquivo completo, seleciona 20 linhas aleatórias e salva como amostra de teste."""
+
+    if not os.path.exists(ARQUIVO_ORIGINAL):
+        print(f"❌ ERRO: Arquivo original não encontrado em: {ARQUIVO_ORIGINAL}")
+        sys.exit(1)
+
+    print(f"Lendo dados de {ARQUIVO_ORIGINAL}...")
+
+    dados = []
+
+    try:
+        with open(ARQUIVO_ORIGINAL, mode='r', encoding='utf-8') as arquivo:
+            leitor_csv = csv.reader(arquivo)
+            cabecalho = next(leitor_csv) # Guarda o cabeçalho
+
+            # Carrega todas as linhas de dados (excluindo o cabeçalho)
+            for linha in leitor_csv:
+                dados.append(linha)
+
+    except Exception as e:
+        print(f"❌ Falha na leitura do arquivo original: {e}")
+        sys.exit(1)
+
+
+    # Seleciona 20 linhas aleatoriamente
+    if len(dados) < TAMANHO_AMOSTRA:
+        print(f"Aviso: O arquivo tem apenas {len(dados)} linhas. Usando todas como amostra.")
+        amostra = dados
+    else:
+        amostra = random.sample(dados, TAMANHO_AMOSTRA)
+
+
+    # Salva a amostra no novo arquivo
+    try:
+        with open(ARQUIVO_AMOSTRA, mode='w', encoding='utf-8', newline='') as arquivo_saida:
+            escritor_csv = csv.writer(arquivo_saida)
+            escritor_csv.writerow(cabecalho) # Escreve o cabeçalho
+            escritor_csv.writerows(amostra) # Escreve as linhas de dados
+
+        print(f"✅ Amostra de {len(amostra)} jogos criada com sucesso em: {ARQUIVO_AMOSTRA}")
+
+    except Exception as e:
+        print(f"❌ Falha ao salvar a amostra: {e}")
+        sys.exit(1)
+
+
+if __name__ == '__main__':
+    criar_amostra_aleatoria()
