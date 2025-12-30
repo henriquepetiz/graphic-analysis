@@ -1,0 +1,49 @@
+Projeto de Análise de Dados Steam - Fun Corp (Fase 1)
+
+Este repositório contém o desenvolvimento da Fase 1 do projeto final da disciplina de Programação para Dados. O objetivo central é a criação de um módulo em Python capaz de processar e analisar dados de mercado da plataforma Steam para a empresa Fun Corp.
+Objetivo
+
+Desenvolver uma arquitetura de software baseada em Orientação a Objetos que permita a carga, o pré-processamento e a consulta de dados tabulares de grande escala (mais de 70.000 registros), priorizando a modularidade e a manutenibilidade do código.
+Restrições e Requisitos Técnicos
+
+Conforme as diretrizes do projeto, esta fase foi desenvolvida seguindo rigorosos critérios técnicos:
+
+    Python Puro: Proibição do uso de bibliotecas de alto nível para análise de dados (Pandas, Numpy, etc).
+
+    Manipulação de Dados: Uso exclusivo de estruturas nativas (listas, dicionários) e da biblioteca padrão csv.
+
+    Qualidade de Código: Implementação de tratamento de exceções, documentação (Docstrings) e modularização de classes.
+
+    Validação por Testes: Criação de um ambiente de testes utilizando uma amostra de 20 jogos validados manualmente para garantir a integridade dos algoritmos de análise.
+
+Estrutura do Módulo
+
+A solução foi organizada para esconder a complexidade da manipulação dos dados, oferecendo uma interface simplificada para o programador final:
+
+    Carga e Limpeza: Tratamento de tipos de dados, conversão de datas e tratamento de valores ausentes.
+
+    Consultas de Negócio:
+
+        Cálculo de percentual entre jogos pagos e gratuitos.
+
+        Identificação do ano com maior volume de lançamentos.
+
+        [Insira aqui o tema da sua pergunta 3].
+
+Conteúdo do Repositório
+
+    modulo_steam.py: Contém as classes e a lógica principal de processamento de dados.
+
+    analise_perguntas.ipynb: Notebook com a execução das consultas e exploração dos resultados.
+
+    amostra_teste.csv: Arquivo contendo 20 registros selecionados aleatoriamente para validação dos testes.
+
+    dataset_completo.csv: (Se aplicável) Referência ao conjunto de dados completo utilizado.
+
+Metodologia de Teste
+
+Para assegurar a confiabilidade, o sistema opera em dois modos:
+
+    Modo de Teste: Executa sobre a amostra reduzida e compara os resultados com os valores previamente calculados de forma estatística/manual.
+
+    Modo de Produção: Executa sobre o arquivo completo de 70.000 registros após a validação da lógica nos testes.
